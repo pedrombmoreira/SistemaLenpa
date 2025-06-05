@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+    <title>Novo Comprador</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+<div class="container my-4">
+
+    <div class="row">
+        <div class="col-md-8 mx-auto rounded border p-4">
+            <h2 class="text-center mb-5">Novo Comprador</h2>
+
+            <form method="POST" th:object="${compradorDTO}">
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label">Nome</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" th:field="${compradorDTO.nome}">
+                        <p th:if="${#fields.hasErrors('nome')}"
+                           th:errorclass="text-danger"
+                           th:errors="${compradorDTO.nome}"></p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label">CPF</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" th:field="${compradorDTO.cpf}">
+                        <p th:if="${#fields.hasErrors('cpf')}"
+                           th:errorclass="text-danger"
+                           th:errors="${compradorDTO.cpf}"></p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label">Telefone</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" th:field="${compradorDTO.telefone}">
+                        <p th:if="${#fields.hasErrors('telefone')}"
+                           th:errorclass="text-danger"
+                           th:errors="${compradorDTO.telefone}"></p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label">Associado CESPOL</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="true" th:field="${compradorDTO.associado_cespol}">
+                        <label class="form-check-label" for="inlineRadio1">Sim</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="false" th:field="${compradorDTO.associado_cespol}">
+                        <label class="form-check-label" for="inlineRadio2">Não</label>
+                    </div>
+                    <p th:if="${#fields.hasErrors('associado_cespol')}"
+                       th:errorclass="text-danger"
+                       th:errors="${compradorDTO.associado_cespol}"></p>
+                </div>
+
+
+                <div class="row">
+                    <div class="offset-sm-4 col-sm-4 d-grid">
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </div>
+                    <div class="col-sm-4 d-grid">
+                        <a class="btn btn-outline-primary" href="/compradores/listar">Cancelar</a>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</body>
+</html>

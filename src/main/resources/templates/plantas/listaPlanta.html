@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Plantas Cadastradas</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+<div class="container my-4">
+
+    <h1 class="text-center mb-3">Plantas Cadastradas</h1>
+    <a class="btn btn-primary" href="/plantas/cadastrar">Nova Planta</a>
+    <a class="btn btn-outline-primary" href="/">Voltar</a>
+
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Nome Popular</th>
+            <th>Nome Cientifico</th>
+            <th>Tipo</th>
+            <th>Descrição</th>
+            <th>Imagem</th>
+            <th>Quantidade</th>
+            <th>Opção</th>
+        </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        <tr th:each="planta : ${plantas}">
+            <td th:text="${planta.id}"></td>
+            <td th:text="${planta.nome_popular}"></td>
+            <td th:text="${planta.nome_cientifico}"></td>
+            <td th:text="${planta.tipo}"></td>
+            <td th:text="${planta.descricao_manejo}"></td>
+            <td>
+                <img th:if="${planta.foto_url != null and !planta.foto_url.isEmpty()}" th:src="${planta.foto_url}" width="100" height="100">
+            </td>
+            <td th:text="${planta.quantidade_mudas}"></td>
+
+            <td style="white-space:nowrap">
+                <a class="btn btn-primary btn-sm"
+                   th:href="@{/plantas/editar (id=${planta.id})}">Editar</a>
+                <a class="btn btn-danger btn-sm"
+                   th:href="@{/plantas/deletar (id=${planta.id})}"
+                   onclick="return confirm('Tem certeza?')">Excluir</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</body>
+</html>

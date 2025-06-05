@@ -1,0 +1,3 @@
+ALTER TABLE entregas ALTER COLUMN valor TYPE NUMERIC(10,2);
+
+
