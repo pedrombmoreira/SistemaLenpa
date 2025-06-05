@@ -16,10 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -71,6 +68,18 @@ public class EntregaController {
 
         Entrega entrega = entregaDTO.toEntity(comprador, usuario, planta);
         entregaRepository.save(entrega);
+
+        return "redirect:/entregas/listar";
+    }
+
+
+    @GetMapping("/deletar")
+    public String deletarEntrega(@RequestParam int id) {
+
+        Entrega entrega = entregaRepository.findById(id).orElse(null);
+        if (entrega != null) {
+            entregaRepository.delete(entrega);
+        }
 
         return "redirect:/entregas/listar";
     }
