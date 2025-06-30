@@ -1,13 +1,16 @@
 package com.projeto.sistema_lenpa.model.usuario;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class UsuarioDTO {
 
     @NotEmpty(message = "Preencha o nome")
     private String nome;
-    @NotEmpty(message = "Preencha o login")
-    private String login;
+    @Email(message = "Formato de e-mail inválido.")
+    @NotBlank(message = "O e-mail é obrigatório.")
+    private String email;
     @NotEmpty(message = "Preencha a senha")
     private String senha;
 
@@ -19,12 +22,12 @@ public class UsuarioDTO {
         this.senha = senha;
     }
 
-    public String getLogin() {
-        return login;
+    public String getEmail() {
+        return email;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getNome() {
@@ -39,7 +42,7 @@ public class UsuarioDTO {
     public Usuario toEntity() {
         Usuario usuario = new Usuario();
         usuario.setNome(nome);
-        usuario.setLogin(login);
+        usuario.setEmail(email);
         usuario.setSenha(senha);
         usuario.setPermissao(Usuario.Permissao.TECNICO);
         return usuario;
@@ -48,14 +51,14 @@ public class UsuarioDTO {
     public static UsuarioDTO fromEntity(Usuario usuario) {
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         usuarioDTO.setNome(usuario.getNome());
-        usuarioDTO.setLogin(usuario.getLogin());
+        usuarioDTO.setEmail(usuario.getEmail());
         usuarioDTO.setSenha(usuario.getSenha());
         return usuarioDTO;
     }
 
     public void updateEntity(Usuario usuario) {
         usuario.setNome(this.nome);
-        usuario.setLogin(this.login);
+        usuario.setEmail(this.email);
         usuario.setSenha(this.senha);
     }
 

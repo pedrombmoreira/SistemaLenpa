@@ -2,28 +2,26 @@ package com.projeto.sistema_lenpa.controller;
 
 import com.projeto.sistema_lenpa.model.planta.Planta;
 import com.projeto.sistema_lenpa.model.planta.PlantaDTO;
-import com.projeto.sistema_lenpa.model.planta.PlantaRepository;
-import com.projeto.sistema_lenpa.model.usuario.Usuario;
-import com.projeto.sistema_lenpa.model.usuario.UsuarioDTO;
+import com.projeto.sistema_lenpa.service.PlantaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/plantas")
-public class PlantaController {
+public class    PlantaController {
 
     @Autowired
-    private PlantaRepository plantaRepository;
+    private PlantaService plantaService;
 
     @GetMapping("/listar")
     public String getPlantas(Model model) {
-        var plantas = plantaRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        List<Planta> plantas = plantaService.getPlantas();
         model.addAttribute("plantas", plantas);
         return "plantas/listaPlanta";
     }
@@ -42,8 +40,7 @@ public class PlantaController {
             return "plantas/cadastroPlanta";
         }
 
-        Planta planta = plantaDTO.toEntity();
-        plantaRepository.save(planta);
+        plantaService.cadastrarPlanta(plantaDTO);
 
         return "redirect:/plantas/listar";
     }
@@ -51,16 +48,16 @@ public class PlantaController {
     @GetMapping("/editar")
     public String editarPlanta(Model model, @RequestParam int id) {
 
-        Planta planta = plantaRepository.findById(id).orElse(null);
+        try {
+            PlantaDTO plantaDTO = plantaService.buscaPlantaEdicao(id);
+            model.addAttribute("plantaDTO", plantaDTO);
+            model.addAttribute("id", id);
+            return "plantas/editarPlanta";
 
-        if (planta == null) {
+        } catch (IllegalArgumentException e) {
+            System.err.println("GET /editar: " + e.getMessage());
             return "redirect:/plantas/listar";
         }
-
-        PlantaDTO plantaDTO = PlantaDTO.fromEntity(planta);
-        model.addAttribute("plantaDTO", plantaDTO);
-
-        return "plantas/editarPlanta";
     }
 
     @PostMapping("/editar")
@@ -69,32 +66,25 @@ public class PlantaController {
                                 @Valid @ModelAttribute PlantaDTO plantaDTO,
                                 BindingResult result) {
 
-        Planta planta = plantaRepository.findById(id).orElse(null);
-
-        if (planta == null) {
-            return "redirect:/plantas/listar";
-        }
-
-        model.addAttribute("planta", planta);
-
         if (result.hasErrors()) {
-            return "usuarios/editarUsuario";
+            return "plantas/editarPlanta";
         }
 
-        plantaDTO.updateEntity(planta);
-        plantaRepository.save(planta);
+        plantaService.editarPlanta(id, plantaDTO);
 
         return "redirect:/plantas/listar";
     }
 
-    @GetMapping("/deletar")
+    @PostMapping("/deletar")
     public String deletarPlanta(@RequestParam int id) {
 
-        Planta planta = plantaRepository.findById(id).orElse(null);
-        if (planta != null) {
-            plantaRepository.delete(planta);
-        }
+        try {
+            // Tenta executar a exclusão através do serviço
+            plantaService.deletarPlanta(id);
 
+        } catch (IllegalArgumentException e) {
+            System.err.println("Tentativa de deletar planta inexistente. ID: " + id + ". Mensagem: " + e.getMessage());
+        }
         return "redirect:/plantas/listar";
     }
 

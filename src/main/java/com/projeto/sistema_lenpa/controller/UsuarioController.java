@@ -2,15 +2,16 @@ package com.projeto.sistema_lenpa.controller;
 
 import com.projeto.sistema_lenpa.model.usuario.Usuario;
 import com.projeto.sistema_lenpa.model.usuario.UsuarioDTO;
-import com.projeto.sistema_lenpa.model.usuario.UsuarioRepository;
+import com.projeto.sistema_lenpa.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Controller
@@ -18,12 +19,12 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsuarioService usuarioService;
 
 
     @GetMapping("/listar")
     public String getUsuarios(Model model) {
-        var usuarios = usuarioRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        List<Usuario> usuarios = usuarioService.getUsuarios();
         model.addAttribute("usuarios", usuarios);
         return "usuarios/listaUsuario";
     }
@@ -38,90 +39,75 @@ public class UsuarioController {
     @PostMapping("/cadastrar")
     public String cadastrarUsuario(@Valid @ModelAttribute UsuarioDTO usuarioDTO, BindingResult result) {
 
-        //Testa se o login já foi cadastrado no banco
-        if (usuarioRepository.findByLogin(usuarioDTO.getLogin()) != null) {
-            result.addError(
-                    new FieldError("usuarioDTO", "login", usuarioDTO.getLogin()
-                    , false, null, null, "Login já em uso")
-            );
-        }
-
-        //Testa se a senha já foi cadastrada
-        if (usuarioRepository.findBySenha(usuarioDTO.getSenha()) != null) {
-            result.addError(
-                    new FieldError("usuarioDTO", "senha", usuarioDTO.getSenha()
-                            , false, null, null, "Senha já em uso")
-            );
-        }
-
         if (result.hasErrors()) {
             return "usuarios/cadastroUsuario";
         }
 
-        Usuario usuario = usuarioDTO.toEntity();
-        usuarioRepository.save(usuario);
+        try {
+            usuarioService.cadastrarUsuario(usuarioDTO);
+
+        } catch (IllegalArgumentException e) {
+            result.addError(new FieldError("usuarioDTO", "email", e.getMessage()));
+            return "usuarios/cadastroUsuario";
+        }
 
         return "redirect:/usuarios/listar";
     }
 
     @GetMapping("/editar")
-    public String editarCliente(Model model, @RequestParam int id) {
+    public String editarUsuario(Model model, @RequestParam int id) {
 
-        Usuario usuario = usuarioRepository.findById(id).orElse(null);
-        if (usuario == null) {
+        try {
+            UsuarioDTO usuarioDTO = usuarioService.buscaUsuarioEdicao(id);
+            model.addAttribute("usuarioDTO", usuarioDTO);
+            model.addAttribute("id", id);
+            return "usuarios/editarUsuario";
+
+        } catch (IllegalArgumentException e) {
+            System.err.println("GET /editar: " + e.getMessage());
             return "redirect:/usuarios/listar";
         }
-
-        UsuarioDTO usuarioDTO = UsuarioDTO.fromEntity(usuario);
-        model.addAttribute("usuarioDTO", usuarioDTO);
-
-        return "usuarios/editarUsuario";
     }
 
     @PostMapping("/editar")
-    public String editarUsuario(Model model,
+    public String editarUsuario(
                                 @RequestParam int id,
                                 @Valid @ModelAttribute UsuarioDTO usuarioDTO,
                                 BindingResult result) {
-
-        Usuario usuario = usuarioRepository.findById(id).orElse(null);
-        if (usuario == null) {
-            return "redirect:/usuarios/listar";
-        }
-
-        model.addAttribute("usuario", usuario);
-
-        // Verifica se o login está sendo alterado e se já existe
-        if (!usuario.getLogin().equals(usuarioDTO.getLogin()) &&
-                usuarioRepository.findByLogin(usuarioDTO.getLogin()) != null) {
-            result.addError(new FieldError("usuarioDTO", "login", "Login já em uso"));
-        }
-
-        // Verifica se a senha está sendo alterada e se já existe
-        if (!usuario.getSenha().equals(usuarioDTO.getSenha()) &&
-                usuarioRepository.findBySenha(usuarioDTO.getSenha()) != null) {
-            result.addError(new FieldError("usuarioDTO", "senha", "Senha já em uso"));
-        }
 
         if (result.hasErrors()) {
             return "usuarios/editarUsuario";
         }
 
-        usuarioDTO.updateEntity(usuario);
-        usuarioRepository.save(usuario);
+        try {
+            usuarioService.editarUsuario(id, usuarioDTO);
+
+        } catch (IllegalArgumentException e) {
+            System.err.println("POST /editar: " + e.getMessage());
+
+            if (e.getMessage().contains("não encontrado")) {
+                return "redirect:/usuarios/listar";
+            } else {
+                // Senão, é um erro de regra de negócio (email duplicado).
+                // Adicionamos ao BindingResult e voltamos para o formulário.
+                result.addError(new FieldError("usuarioDTO", "email", e.getMessage()));
+                return "usuarios/editarUsuario";
+            }
+        }
 
         return "redirect:/usuarios/listar";
     }
 
-    @GetMapping("/deletar")
+    @PostMapping("/deletar")
     public String deletarUsuario(@RequestParam int id) {
 
-        Usuario usuario = usuarioRepository.findById(id).orElse(null);
-        if (usuario != null) {
-            usuarioRepository.delete(usuario);
+        try {
+            usuarioService.deletarUsuario(id);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Tentativa de deletar usuário inexistente. ID: " + id + ". Mensagem: " + e.getMessage());
         }
 
-    return "redirect:/usuarios/listar";
+        return "redirect:/usuarios/listar";
     }
 
 }

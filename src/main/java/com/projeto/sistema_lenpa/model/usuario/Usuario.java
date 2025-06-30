@@ -2,6 +2,8 @@ package com.projeto.sistema_lenpa.model.usuario;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -14,9 +16,10 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nome;
-    @Column(unique=true)
-    private String login;
-    @Column(unique=true)
+    @Column(unique=true, nullable=false)
+    @Email(message = "Formato de e-mail inválido.")
+    @NotBlank(message = "O e-mail é obrigatório.")
+    private String email;
     private String senha;
     @Enumerated(EnumType.STRING)
     private Permissao permissao;
@@ -41,12 +44,12 @@ public class Usuario {
         this.nome = nome;
     }
 
-    public String getLogin() {
-        return login;
+    public String getEmail() {
+        return email;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getSenha() {

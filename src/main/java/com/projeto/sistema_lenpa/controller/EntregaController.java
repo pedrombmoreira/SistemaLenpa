@@ -1,32 +1,27 @@
 package com.projeto.sistema_lenpa.controller;
 
-import com.projeto.sistema_lenpa.model.comprador.Comprador;
-import com.projeto.sistema_lenpa.model.comprador.CompradorRepository;
-import com.projeto.sistema_lenpa.model.entrega.Entrega;
+import com.projeto.sistema_lenpa.repository.CompradorRepository;
 import com.projeto.sistema_lenpa.model.entrega.EntregaDTO;
-import com.projeto.sistema_lenpa.model.entrega.EntregaRepository;
-import com.projeto.sistema_lenpa.model.planta.Planta;
-import com.projeto.sistema_lenpa.model.planta.PlantaDTO;
-import com.projeto.sistema_lenpa.model.planta.PlantaRepository;
-import com.projeto.sistema_lenpa.model.usuario.Usuario;
-import com.projeto.sistema_lenpa.model.usuario.UsuarioRepository;
+import com.projeto.sistema_lenpa.repository.PlantaRepository;
+import com.projeto.sistema_lenpa.repository.UsuarioRepository;
+import com.projeto.sistema_lenpa.service.EntregaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.Date;
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/entregas")
 public class EntregaController {
 
     @Autowired
-    private EntregaRepository entregaRepository;
+    private EntregaService entregaService;
+
     @Autowired
     private CompradorRepository compradorRepository;
     @Autowired
@@ -37,48 +32,97 @@ public class EntregaController {
 
     @GetMapping("/listar")
     public String getEntregas(Model model) {
-        var entregas = entregaRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
-        model.addAttribute("entregas", entregas);
+        model.addAttribute("entregas", entregaService.getEntregas());
         return "entregas/listaEntrega";
     }
 
     @GetMapping("/cadastrar")
     public String cadastrar(Model model) {
-        EntregaDTO entregaDTO = new EntregaDTO();
-        model.addAttribute("entregaDTO", entregaDTO);
-        var compradores = compradorRepository.findAll();
-        model.addAttribute("compradores", compradores);
-        var usuarios = usuarioRepository.findAll();
-        model.addAttribute("usuarios", usuarios);
-        var plantas = plantaRepository.findAll();
-        model.addAttribute("plantas", plantas);
+        model.addAttribute("entregaDTO", new EntregaDTO());
+        model.addAttribute("compradores", compradorRepository.findAll());
+        model.addAttribute("usuarios", usuarioRepository.findAll());
+        model.addAttribute("plantas", plantaRepository.findAll());
         return "entregas/cadastroEntrega";
     }
 
     @PostMapping("/cadastrar")
-    public String cadastrarEntrega(@Valid @ModelAttribute EntregaDTO entregaDTO, BindingResult result) {
+    public String cadastrarEntrega(@Valid @ModelAttribute EntregaDTO entregaDTO, BindingResult result, Model model, Principal principal) {
 
         if (result.hasErrors()) {
+            model.addAttribute("compradores", compradorRepository.findAll());
+            model.addAttribute("usuarios", usuarioRepository.findAll());
+            model.addAttribute("plantas", plantaRepository.findAll());
             return "entregas/cadastroEntrega";
         }
 
-        Comprador comprador = compradorRepository.findById(entregaDTO.getIdComprador()).orElse(null);
-        Usuario usuario = usuarioRepository.findById(entregaDTO.getIdUsuario()).orElse(null);
-        Planta planta = plantaRepository.findById(entregaDTO.getIdPlanta()).orElse(null);
+        try {
+            entregaService.cadastrarEntrega(entregaDTO, principal.getName());
+        } catch (IllegalArgumentException e) {
+            result.addError(new FieldError("entregaDTO", "idPlanta", e.getMessage()));
+            result.addError(new FieldError("entregaDTO", "quantidade_mudas", e.getMessage()));
 
-        Entrega entrega = entregaDTO.toEntity(comprador, usuario, planta);
-        entregaRepository.save(entrega);
+            model.addAttribute("compradores", compradorRepository.findAll());
+            model.addAttribute("usuarios", usuarioRepository.findAll());
+            model.addAttribute("plantas", plantaRepository.findAll());
+            return "entregas/cadastroEntrega";
+        }
 
         return "redirect:/entregas/listar";
     }
 
+    @GetMapping("/editar")
+    public String editarEntregaForm(Model model, @RequestParam int id) {
+        try {
+            EntregaDTO entregaDTO = entregaService.buscarEntregaEdicao(id);
+            model.addAttribute("entregaDTO", entregaDTO);
+            model.addAttribute("id", id);
 
-    @GetMapping("/deletar")
+            model.addAttribute("compradores", compradorRepository.findAll());
+            model.addAttribute("usuarios", usuarioRepository.findAll());
+            model.addAttribute("plantas", plantaRepository.findAll());
+
+            return "entregas/editarEntrega";
+
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+            return "redirect:/entregas/listar";
+        }
+    }
+
+    @PostMapping("/editar")
+    public String processarEdicaoEntrega(@RequestParam int id,
+                                         @Valid @ModelAttribute("entregaDTO") EntregaDTO entregaDTO,
+                                         BindingResult result,
+                                         Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("compradores", compradorRepository.findAll());
+            model.addAttribute("usuarios", usuarioRepository.findAll());
+            model.addAttribute("plantas", plantaRepository.findAll());
+            return "entregas/editarEntrega";
+        }
+
+        try {
+            entregaService.atualizarEntrega(id, entregaDTO);
+
+        } catch (IllegalArgumentException e) {
+            result.addError(new FieldError("entregaDTO", "idPlanta", e.getMessage()));
+
+            model.addAttribute("compradores", compradorRepository.findAll());
+            model.addAttribute("usuarios", usuarioRepository.findAll());
+            model.addAttribute("plantas", plantaRepository.findAll());
+            return "entregas/editarEntrega";
+        }
+
+        return "redirect:/entregas/listar";
+    }
+
+    @PostMapping("/deletar")
     public String deletarEntrega(@RequestParam int id) {
 
-        Entrega entrega = entregaRepository.findById(id).orElse(null);
-        if (entrega != null) {
-            entregaRepository.delete(entrega);
+        try {
+            entregaService.deletarEntrega(id);
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
         }
 
         return "redirect:/entregas/listar";

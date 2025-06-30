@@ -99,7 +99,6 @@ public class EntregaDTO {
 
     public void updateEntity(Entrega entrega, Comprador comprador, Usuario usuario, Planta planta) {
         entrega.setComprador(comprador);
-        entrega.setQuantidade_mudas(this.quantidade_mudas);
         entrega.setValor(this.valor);
         entrega.setDestino(this.destino);
         entrega.setUsuario(usuario);

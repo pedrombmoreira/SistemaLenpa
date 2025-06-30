@@ -2,7 +2,7 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Entregas Registradas</title>
+    <title>Lotes Cadastrados</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -10,7 +10,6 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-
 
 <nav class="navbar navbar-expand-md navbar-dark sticky-top bg-dark">
     <div class="container">
@@ -60,10 +59,10 @@
     </div>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="mb-0">Entregas Cadastradas</h1>
+        <h1 class="mb-0">Lotes Cadastrados</h1>
 
         <div>
-            <a class="btn btn-primary" href="/entregas/cadastrar">Nova Entrega</a>
+            <a class="btn btn-primary" href="/lotes/cadastrar">Novo Lote</a>
         </div>
     </div>
 
@@ -73,35 +72,25 @@
         <thead class="table-dark">
         <tr>
             <th>ID</th>
-            <th>Comprador</th>
             <th>Planta</th>
             <th>Quantidade</th>
-            <th>Valor</th>
-            <th>Data</th>
-            <th>Destino das mudas</th>
-            <th>Registrado por</th>
+            <th>Data de geração</th>
             <th>Opção</th>
         </tr>
         </thead>
         <tbody class="table-group-divider">
-        <tr th:each="entrega : ${entregas}">
-            <td th:text="${entrega.id}"></td>
-            <td th:text="${entrega.comprador.nome}"></td>
-            <td th:text="${entrega.planta.nome_popular}"></td>
-            <td th:text="${entrega.quantidade_mudas}"></td>
-            <td th:text="${entrega.valor}"></td>
-            <td th:text="${#temporals.format(entrega.dataEntrega, 'dd/MM/yyyy')}"></td>
-            <td th:text="${entrega.destino}"></td>
-            <td th:text="${entrega.usuario.nome}"></td>
+        <tr th:each="lote : ${lotes}">
 
+            <td th:text="${lote.id}"></td>
+            <td th:text="${lote.planta.nome_popular}"></td>
+            <td th:text="${lote.quantidade}"></td>
+            <td th:text="${#temporals.format(lote.data_geracao, 'dd/MM/yyyy')}"></td>
 
             <td style="white-space:nowrap">
-                <a class="btn btn-primary btn-sm"
-                   th:href="@{/entregas/editar (id=${entrega.id})}">Editar</a>
-                <form th:action="@{/entregas/deletar}" method="post" style="display:inline;">
-                    <input type="hidden" name="id" th:value="${entrega.id}"/>
+                <form th:action="@{/lotes/deletar}" method="post" style="display:inline;">
+                    <input type="hidden" name="id" th:value="${lote.id}"/>
                     <button type="submit" class="btn btn-danger btn-sm"
-                            onclick="return confirm('Tem certeza que deseja deletar esta entrega?');">
+                            onclick="return confirm('Tem certeza que deseja deletar este lote?');">
                         Deletar
                     </button>
                 </form>
