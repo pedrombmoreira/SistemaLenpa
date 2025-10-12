@@ -88,6 +88,5 @@ public class PlantaDTO {
         planta.setNome_cientifico(nome_cientifico);
         planta.setTipo(tipo);
         planta.setDescricao_manejo(descricao_manejo);
-        planta.setFoto_url(foto_url);
     }
 }

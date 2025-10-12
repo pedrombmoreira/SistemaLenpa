@@ -3,6 +3,7 @@ package com.projeto.sistema_lenpa.service;
 import com.projeto.sistema_lenpa.model.comprador.Comprador;
 import com.projeto.sistema_lenpa.model.entrega.Entrega;
 import com.projeto.sistema_lenpa.model.entrega.EntregaDTO;
+import com.projeto.sistema_lenpa.model.entrega.RelatorioEntregasDTO;
 import com.projeto.sistema_lenpa.model.planta.Planta;
 import com.projeto.sistema_lenpa.model.usuario.Usuario;
 import com.projeto.sistema_lenpa.repository.CompradorRepository;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -76,6 +79,23 @@ public class EntregaService {
         return EntregaDTO.fromEntity(entrega);
     }
 
+    public Entrega buscarEntidadePorId(int id) {
+        return entregaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Entrega não encontrada"));
+    }
+
+    public RelatorioEntregasDTO buscarEntregasFiltradas(LocalDate dataInicio, LocalDate dataFim) {
+        // Busca a lista de entregas já filtrada pelo repositório
+        List<Entrega> entregasFiltradas = entregaRepository.findByFilter(dataInicio, dataFim);
+
+        // Calcula o valor total apenas das VENDAS dentro da lista filtrada
+        BigDecimal valorTotal = entregasFiltradas.stream()
+                .map(entrega -> entrega.getValor() == null ? BigDecimal.ZERO : entrega.getValor())
+                .reduce(BigDecimal.ZERO, BigDecimal::add); // Soma todos os valores
+
+        // Retorna o DTO com a lista e o total calculado
+        return new RelatorioEntregasDTO(entregasFiltradas, valorTotal);
+    }
+
     public void atualizarEntrega(int id, EntregaDTO entregaDTO) {
         Entrega entregaExistente = entregaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Falha ao atualizar: Entrega com ID " + id + " não encontrada."));
@@ -83,11 +103,10 @@ public class EntregaService {
         Comprador comprador = compradorRepository.findById(entregaDTO.getIdComprador())
                 .orElseThrow(() -> new IllegalArgumentException("Comprador com ID " + entregaDTO.getIdComprador() + " não encontrado."));
 
-        Usuario usuario = usuarioRepository.findById(entregaDTO.getIdUsuario())
-                .orElseThrow(() -> new IllegalArgumentException("Usuário com ID " + entregaDTO.getIdUsuario() + " não encontrado."));
-
         Planta planta = plantaRepository.findById(entregaDTO.getIdPlanta())
                 .orElseThrow(() -> new IllegalArgumentException("Planta com ID " + entregaDTO.getIdPlanta() + " não encontrada."));
+
+        Usuario usuario = entregaExistente.getUsuario();
 
         entregaDTO.updateEntity(entregaExistente, comprador, usuario, planta);
 

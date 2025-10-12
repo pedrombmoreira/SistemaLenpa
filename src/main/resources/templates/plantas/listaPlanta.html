@@ -63,6 +63,7 @@
         <h1 class="mb-0">Plantas Cadastradas</h1>
 
         <div>
+            <a class="btn btn-secondary" href="/lotes/cadastrar">Novo Lote</a>
             <a class="btn btn-primary" href="/plantas/cadastrar">Nova Planta</a>
         </div>
     </div>
@@ -72,7 +73,6 @@
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
         <tr>
-            <th>ID</th>
             <th>Nome Popular</th>
             <th>Nome Cientifico</th>
             <th>Tipo</th>
@@ -84,7 +84,6 @@
         </thead>
         <tbody class="table-group-divider">
         <tr th:each="planta : ${plantas}">
-            <td th:text="${planta.id}"></td>
             <td th:text="${planta.nome_popular}"></td>
             <td th:text="${planta.nome_cientifico}"></td>
             <td th:text="${planta.tipo}"></td>
@@ -96,8 +95,13 @@
                 </button>
             </td>
             <td>
-                <img th:if="${planta.foto_url != null and !planta.foto_url.isEmpty()}" th:src="${planta.foto_url}"
-                     width="100" height="100">
+                <div th:if="${planta.foto_url != null and !planta.foto_url.isEmpty()}">
+                    <img th:if="${#strings.startsWith(planta.foto_url, 'http')}"
+                         th:src="${planta.foto_url}" alt="Foto" style="width:100px;">
+
+                    <img th:if="${not #strings.startsWith(planta.foto_url, 'http')}"
+                         th:src="@{'/uploads/' + ${planta.foto_url}}" alt="Foto" style="width:100px;">
+                </div>
             </td>
             <td th:text="${planta.quantidade_mudas}"></td>
 

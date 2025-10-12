@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <h4 class="text-muted">${planta.nome_cientifico}</h4>
                                 <hr>
                                 <h5>Tipo: <span class="badge bg-secondary">${planta.tipo}</span></h5>
-                                <h5 class="mt-4">Descrição de Manejo</h5>
+                                <h5 class="mt-4">Dicas de Manejo</h5>
                                 <p style="white-space: pre-wrap;">${planta.descricao_manejo}</p>
                             </div>
                         </div>
@@ -43,6 +43,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
         });
     }
+
+    // Máscara para o campo de CPF
+    const elementoCpf = document.getElementById('cpf');
+    if (elementoCpf) { // Só executa se o elemento existir na página atual
+        const mascaraCpf = {
+            mask: '000.000.000-00'
+        };
+        IMask(elementoCpf, mascaraCpf);
+    }
+
+    // Máscara para o campo de Telefone
+    const elementoTelefone = document.getElementById('telefone');
+    if (elementoTelefone) {
+        const mascaraTelefone = {
+            mask: '(00) 00000-0000'
+        };
+        IMask(elementoTelefone, mascaraTelefone);
+    }
+
 });
 
 function toggleSenha() {
@@ -70,3 +89,4 @@ if (descricaoModal) {
         modalBody.textContent = descricao_manejo;
     });
 }
+

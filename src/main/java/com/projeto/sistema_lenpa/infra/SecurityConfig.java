@@ -15,9 +15,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/**") // Ignora a proteção CSRF para todas as rotas de API
+                )
                 .authorizeHttpRequests(authorize -> authorize
                         // 1. Permite acesso público a estas rotas
-                        .requestMatchers("/", "/login", "/index", "/css/**", "/js/**", "/images/**", "/api/plantas/**", "/planta/**").permitAll()
+                        .requestMatchers("/", "/login", "/index", "/css/**", "/js/**", "/uploads/**", "/images/**", "/api/plantas/**", "/planta/**").permitAll()
 
                         // 2. Apenas quem tem o papel 'GESTOR' pode acessar as rotas de usuários
                         .requestMatchers("/usuarios/**").hasRole("GESTOR")

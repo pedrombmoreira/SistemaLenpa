@@ -2,9 +2,7 @@ package com.projeto.sistema_lenpa.model.comprador;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Entity
 @Table(name="compradores")

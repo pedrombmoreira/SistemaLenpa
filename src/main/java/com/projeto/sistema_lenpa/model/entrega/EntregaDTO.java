@@ -3,17 +3,33 @@ package com.projeto.sistema_lenpa.model.entrega;
 import com.projeto.sistema_lenpa.model.comprador.Comprador;
 import com.projeto.sistema_lenpa.model.planta.Planta;
 import com.projeto.sistema_lenpa.model.usuario.Usuario;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class EntregaDTO {
 
+    @NotNull(message = "O comprador é obrigatório")
     private Integer idComprador;
+
+    @PastOrPresent(message = "A data de entrada não pode ser uma data futura")
     private LocalDate dataEntrega;
+
+    @NotNull(message = "A quantidade é obrigatória")
+    @Min(value = 1, message = "A quantidade de mudas deve ser no mínimo 1")
+
     private int quantidade_mudas;
+
+    @DecimalMin(value = "0.00", inclusive = true, message = "O valor não pode ser negativo")
     private BigDecimal valor;
     private String destino;
     private Integer idUsuario;
+
+    @NotNull(message = "A planta é obrigatória")
     private Integer idPlanta;
 
     public LocalDate getDataEntrega() {
@@ -72,11 +88,10 @@ public class EntregaDTO {
         this.destino = destino;
     }
 
-
     public Entrega toEntity(Comprador comprador, Usuario usuario, Planta planta) {
         Entrega entrega = new Entrega();
         entrega.setComprador(comprador);
-        entrega.setDataEntrega(LocalDate.now());
+        entrega.setDataEntrega(this.dataEntrega != null ? this.dataEntrega : LocalDate.now());
         entrega.setQuantidade_mudas(quantidade_mudas);
         entrega.setValor(valor);
         entrega.setDestino(destino);
@@ -88,7 +103,7 @@ public class EntregaDTO {
     public static EntregaDTO fromEntity(Entrega entrega) {
         EntregaDTO dto = new EntregaDTO();
         dto.setIdComprador(entrega.getComprador().getId());
-        dto.setDataEntrega(LocalDate.now());
+        dto.setDataEntrega(entrega.getDataEntrega());
         dto.setQuantidade_mudas(entrega.getQuantidade_mudas());
         dto.setValor(entrega.getValor());
         dto.setDestino(entrega.getDestino());
@@ -103,5 +118,8 @@ public class EntregaDTO {
         entrega.setDestino(this.destino);
         entrega.setUsuario(usuario);
         entrega.setPlanta(planta);
+        if (this.dataEntrega != null) {
+            entrega.setDataEntrega(this.dataEntrega);
+        }
     }
 }

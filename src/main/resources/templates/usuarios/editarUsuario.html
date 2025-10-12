@@ -17,7 +17,7 @@
         <div class="col-md-8 mx-auto rounded border p-4 bg-light">
             <h2 class="text-center mb-5">Editar Membro</h2>
 
-            <form th:action="@{/usuarios/editar}" method="POST" th:object="${usuarioDTO}">
+            <form th:action="@{/usuarios/editar(id=${id})}" method="POST" th:object="${usuarioDTO}">
 
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Nome</label>

@@ -9,7 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -34,13 +36,22 @@ public class    PlantaController {
     }
 
     @PostMapping("/cadastrar")
-    public String cadastrarPlanta(@Valid @ModelAttribute PlantaDTO plantaDTO, BindingResult result) {
+    public String cadastrarPlanta(@Valid @ModelAttribute PlantaDTO plantaDTO, BindingResult result,
+                                  @RequestParam("imagemFile") MultipartFile imagem, // Recebe o arquivo do formulário
+                                  Model model) {
 
         if (result.hasErrors()) {
             return "plantas/cadastroPlanta";
         }
 
-        plantaService.cadastrarPlanta(plantaDTO);
+        try {
+            // Passa o DTO e o arquivo para o serviço
+            plantaService.cadastrarPlanta(plantaDTO, imagem);
+        } catch (IOException e) {
+            // Se der erro no upload, volta para o formulário com uma mensagem
+            model.addAttribute("erroUpload", "Falha ao salvar a imagem. Tente novamente.");
+            return "plantas/cadastroPlanta";
+        }
 
         return "redirect:/plantas/listar";
     }
@@ -64,13 +75,23 @@ public class    PlantaController {
     public String editarPlanta(Model model,
                                 @RequestParam int id,
                                 @Valid @ModelAttribute PlantaDTO plantaDTO,
-                                BindingResult result) {
+                                BindingResult result,
+                                @RequestParam("imagemFile") MultipartFile imagem) {
 
         if (result.hasErrors()) {
+            // Se houver erro, precisa carregar os dados novamente para a view
             return "plantas/editarPlanta";
         }
 
-        plantaService.editarPlanta(id, plantaDTO);
+        try {
+            plantaService.editarPlanta(id, plantaDTO, imagem);
+        } catch (IOException e) {
+            model.addAttribute("erroUpload", "Falha ao salvar a nova imagem.");
+            return "plantas/editarPlanta";
+        } catch (IllegalArgumentException e) {
+            result.rejectValue("nome_popular", "error.plantaDTO", e.getMessage());
+            return "plantas/editarPlanta";
+        }
 
         return "redirect:/plantas/listar";
     }

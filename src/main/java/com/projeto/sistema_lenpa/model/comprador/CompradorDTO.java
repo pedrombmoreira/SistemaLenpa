@@ -1,12 +1,14 @@
 package com.projeto.sistema_lenpa.model.comprador;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 
 public class CompradorDTO {
 
     @NotEmpty(message = "Preencha o nome")
     private String nome;
     @NotEmpty(message = "Preencha o CPF")
+    @Pattern(regexp = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$", message = "Formato de CPF inválido. Use 999.999.999-99")
     private String cpf;
     @NotEmpty(message = "Preencha o telefone")
     private String telefone;

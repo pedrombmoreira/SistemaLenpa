@@ -27,7 +27,6 @@ public class Entrega {
     private Comprador comprador;
     private LocalDate dataEntrega;
     private int quantidade_mudas;
-    @DecimalMin(value = "0.00", inclusive = true, message = "O valor não pode ser negativo")
     private BigDecimal valor;
     private String destino;
     @ManyToOne

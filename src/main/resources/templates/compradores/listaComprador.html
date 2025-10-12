@@ -61,6 +61,7 @@
         <h1 class="mb-0">Compradores Cadastrados</h1>
 
         <div>
+            <a class="btn btn-secondary" href="/entregas/listar">Entregas</a>
             <a class="btn btn-primary" href="/compradores/cadastrar">Novo Comprador</a>
         </div>
     </div>
@@ -70,7 +71,6 @@
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
         <tr>
-            <th>ID</th>
             <th>Nome</th>
             <th>CPF</th>
             <th>Telefone</th>
@@ -80,7 +80,6 @@
         </thead>
         <tbody class="table-group-divider">
         <tr th:each="comprador : ${compradores}">
-            <td th:text="${comprador.id}"></td>
             <td th:text="${comprador.nome}"></td>
             <td th:text="${comprador.cpf}"></td>
             <td th:text="${comprador.telefone}"></td>

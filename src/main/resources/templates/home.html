@@ -92,8 +92,15 @@
     <div class="row row-cols-1 row-cols-md-3 g-4">
         <div class="col" th:each="planta : ${plantas}">
             <div class="card h-100">
-                <img th:src="@{${planta.foto_url}}" class="card-img-top" alt="Foto da planta"
-                     style="height: 200px; object-fit: cover;">
+                <div th:if="${planta.foto_url != null and !planta.foto_url.isEmpty()}">
+                    <img th:if="${#strings.startsWith(planta.foto_url, 'http')}"
+                         th:src="${planta.foto_url}"
+                         class="card-img-top" alt="Foto da planta" style="height: 200px; object-fit: cover;">
+
+                    <img th:if="${not #strings.startsWith(planta.foto_url, 'http')}"
+                         th:src="@{'/uploads/' + ${planta.foto_url}}"
+                         class="card-img-top" alt="Foto da planta" style="height: 200px; object-fit: cover;">
+                </div>
                 <div class="card-body">
                     <h5 class="card-title" th:text="${planta.nome_popular}">Nome da Planta</h5>
                     <p class="card-text text-muted" th:text="${planta.nome_cientifico}">Nome científico</p>
