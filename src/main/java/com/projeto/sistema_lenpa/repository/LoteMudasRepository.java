@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LoteMudasRepository extends JpaRepository<LoteMudas, Integer> {
+    boolean existsByPlantaId(Integer plantaId);
 }

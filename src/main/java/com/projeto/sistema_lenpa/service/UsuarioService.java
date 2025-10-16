@@ -2,11 +2,15 @@ package com.projeto.sistema_lenpa.service;
 
 import com.projeto.sistema_lenpa.model.usuario.Usuario;
 import com.projeto.sistema_lenpa.model.usuario.UsuarioDTO;
+import com.projeto.sistema_lenpa.model.usuario.UsuarioListaDTO;
+import com.projeto.sistema_lenpa.repository.EntregaRepository;
 import com.projeto.sistema_lenpa.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,9 +20,19 @@ public class UsuarioService {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private EntregaRepository entregaRepository;
 
-    public List<Usuario> getUsuarios() {
-        return usuarioRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+    public List<UsuarioListaDTO> getUsuarios() {
+
+        List<Usuario> usuarios = usuarioRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        List<UsuarioListaDTO> dtosParaRetornar = new ArrayList<>();
+
+        for (Usuario usuario : usuarios) {
+            boolean temVinculos = entregaRepository.existsByUsuarioId(usuario.getId());
+            dtosParaRetornar.add(new UsuarioListaDTO(usuario, !temVinculos));
+        }
+        return dtosParaRetornar;
     }
 
     public void cadastrarUsuario(UsuarioDTO usuarioDTO) {

@@ -2,6 +2,7 @@ package com.projeto.sistema_lenpa.controller;
 
 import com.projeto.sistema_lenpa.model.planta.Planta;
 import com.projeto.sistema_lenpa.model.planta.PlantaDTO;
+import com.projeto.sistema_lenpa.model.planta.PlantaListaDTO;
 import com.projeto.sistema_lenpa.service.PlantaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class    PlantaController {
 
     @GetMapping("/listar")
     public String getPlantas(Model model) {
-        List<Planta> plantas = plantaService.getPlantas();
+        List<PlantaListaDTO> plantas = plantaService.getPlantas();
         model.addAttribute("plantas", plantas);
         return "plantas/listaPlanta";
     }

@@ -1,4 +1,4 @@
-package com.projeto.sistema_lenpa;
+package com.projeto.sistema_lenpa.util;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

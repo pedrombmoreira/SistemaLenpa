@@ -2,6 +2,7 @@ package com.projeto.sistema_lenpa.controller;
 
 import com.projeto.sistema_lenpa.model.usuario.Usuario;
 import com.projeto.sistema_lenpa.model.usuario.UsuarioDTO;
+import com.projeto.sistema_lenpa.model.usuario.UsuarioListaDTO;
 import com.projeto.sistema_lenpa.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class UsuarioController {
 
     @GetMapping("/listar")
     public String getUsuarios(Model model) {
-        List<Usuario> usuarios = usuarioService.getUsuarios();
+        List<UsuarioListaDTO> usuarios = usuarioService.getUsuarios();
         model.addAttribute("usuarios", usuarios);
         return "usuarios/listaUsuario";
     }

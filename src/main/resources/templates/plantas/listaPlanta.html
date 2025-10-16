@@ -108,13 +108,16 @@
             <td style="white-space:nowrap">
                 <a class="btn btn-primary btn-sm"
                    th:href="@{/plantas/editar (id=${planta.id})}">Editar</a>
-                <form th:action="@{/plantas/deletar}" method="post" style="display:inline;">
-                    <input type="hidden" name="id" th:value="${planta.id}"/>
-                    <button type="submit" class="btn btn-danger btn-sm"
-                            onclick="return confirm('Tem certeza que deseja deletar esta planta?');">
-                        Deletar
-                    </button>
-                </form>
+
+                <th:block th:if="${planta.podeExcluir}">
+                    <form th:action="@{/plantas/deletar}" method="post" style="display:inline;">
+                        <input type="hidden" name="id" th:value="${planta.id}"/>
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Tem certeza que deseja deletar esta planta?');">
+                            Deletar
+                        </button>
+                    </form>
+                </th:block>
             </td>
         </tr>
         </tbody>

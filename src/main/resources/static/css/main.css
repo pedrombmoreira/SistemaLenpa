@@ -1,11 +1,11 @@
 body{
-    background: rgb(141,194,111);
+    background: rgb(211, 255, 188);
 }
 
 .hero-banner-lenpa {
     color: #1c3d1e;
     background-image: linear-gradient(
-            to right, #60c664 30%, rgba(184, 248, 188, 0.1) 100%
+            to right, #adf671 20%, rgba(184, 248, 188, 0.1) 100%
     ),
     url('../images/lab.png');
     background-size: cover;

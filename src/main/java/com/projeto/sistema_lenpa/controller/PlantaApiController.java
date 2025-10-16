@@ -2,6 +2,7 @@ package com.projeto.sistema_lenpa.controller;
 
 import com.projeto.sistema_lenpa.model.planta.Planta;
 import com.projeto.sistema_lenpa.model.planta.PlantaDTO;
+import com.projeto.sistema_lenpa.model.planta.PlantaListaDTO;
 import com.projeto.sistema_lenpa.repository.PlantaRepository;
 import com.projeto.sistema_lenpa.service.PlantaService; // Importe o serviço
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class PlantaApiController {
 
     // O método de listar agora também usa o serviço, para manter o padrão.
     @GetMapping
-    public List<Planta> listarPlantas() {
+    public List<PlantaListaDTO> listarPlantas() {
         return plantaService.getPlantas(); // Supondo que este método exista no seu serviço
     }
 

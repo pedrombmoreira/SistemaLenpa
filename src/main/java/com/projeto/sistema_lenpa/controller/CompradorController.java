@@ -2,6 +2,7 @@ package com.projeto.sistema_lenpa.controller;
 
 import com.projeto.sistema_lenpa.model.comprador.Comprador;
 import com.projeto.sistema_lenpa.model.comprador.CompradorDTO;
+import com.projeto.sistema_lenpa.model.comprador.CompradorListaDTO;
 import com.projeto.sistema_lenpa.service.CompradorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class CompradorController {
 
     @GetMapping("/listar")
     public String getCompradores(Model model) {
-        List<Comprador> compradores = compradorService.getCompradores();
+        List<CompradorListaDTO> compradores = compradorService.getCompradores();
         model.addAttribute("compradores", compradores);
         return "compradores/listaComprador";
     }

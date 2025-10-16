@@ -2,11 +2,14 @@ package com.projeto.sistema_lenpa.service;
 
 import com.projeto.sistema_lenpa.model.comprador.Comprador;
 import com.projeto.sistema_lenpa.model.comprador.CompradorDTO;
+import com.projeto.sistema_lenpa.model.comprador.CompradorListaDTO;
 import com.projeto.sistema_lenpa.repository.CompradorRepository;
+import com.projeto.sistema_lenpa.repository.EntregaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,8 +18,28 @@ public class CompradorService {
     @Autowired
     private CompradorRepository compradorRepository;
 
-    public List<Comprador> getCompradores() {
-        return compradorRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+    @Autowired
+    private EntregaRepository entregaRepository;
+
+    public List<CompradorListaDTO> getCompradores() {
+
+        List<Comprador> compradores = compradorRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+
+        List<CompradorListaDTO> dtosParaRetornar = new ArrayList<>();
+
+        //Percorre a lista original com um laço for
+        for (Comprador comprador : compradores) {
+            //Para cada comprador, faz a verificação de vínculos
+            boolean temVinculos = entregaRepository.existsByCompradorId(comprador.getId());
+
+            //Cria o novo DTO com a informação de exclusão
+            CompradorListaDTO dto = new CompradorListaDTO(comprador, !temVinculos);
+
+            //Adiciona o DTO recém-criado na nossa lista de retorno
+            dtosParaRetornar.add(dto);
+        }
+
+        return dtosParaRetornar;
     }
 
     public void cadastrarComprador(CompradorDTO compradorDTO) {

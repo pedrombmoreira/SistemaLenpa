@@ -88,13 +88,16 @@
             <td style="white-space:nowrap">
                 <a class="btn btn-primary btn-sm"
                    th:href="@{/usuarios/editar (id=${usuario.id})}">Editar</a>
-                <form th:action="@{/usuarios/deletar}" method="post" style="display:inline;">
-                    <input type="hidden" name="id" th:value="${usuario.id}"/>
-                    <button type="submit" class="btn btn-danger btn-sm"
-                            onclick="return confirm('Tem certeza que deseja deletar este usuário?');">
-                        Deletar
-                    </button>
-                </form>
+
+                <th:block th:if="${usuario.podeExcluir}">
+                    <form th:action="@{/usuarios/deletar}" method="post" style="display:inline;">
+                        <input type="hidden" name="id" th:value="${usuario.id}"/>
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Tem certeza que deseja deletar este usuário?');">
+                            Deletar
+                        </button>
+                    </form>
+                </th:block>
             </td>
         </tr>
         </tbody>

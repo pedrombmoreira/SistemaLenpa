@@ -16,4 +16,8 @@ public interface EntregaRepository extends JpaRepository<Entrega, Integer> {
             "e.dataEntrega <= COALESCE(:dataFim, CAST('2999-12-31' AS date))")
     List<Entrega> findByFilter(@Param("dataInicio") LocalDate dataInicio,
                                @Param("dataFim") LocalDate dataFim);
+
+    boolean existsByCompradorId(Integer compradorId);
+    boolean existsByPlantaId(Integer plantaId);
+    boolean existsByUsuarioId(Integer usuarioId);
 }
