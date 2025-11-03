@@ -58,7 +58,7 @@
                 </div>
 
                 <div class="row mb-3">
-                    <label class="col-sm-4 col-form-label">Valor</label> <div class="col-sm-8">
+                    <label class="col-sm-4 col-form-label">Valor (opcional)</label> <div class="col-sm-8">
                     <div class="input-group">
                         <span class="input-group-text">R$</span>
                         <input type="number" class="form-control" th:field="*{valor}" step="0.01" min="0" placeholder="0,00">
@@ -81,7 +81,7 @@
                 </div>
 
                 <div class="row mb-3">
-                    <label for="dataEntrega" class="col-sm-4 col-form-label">Data da Entrega (Opcional)</label>
+                    <label for="dataEntrega" class="col-sm-4 col-form-label">Data da Entrega (opcional)</label>
                     <div class="col-sm-8">
                         <input type="date" class="form-control" id="dataEntrega" th:field="*{dataEntrega}">
                         <p th:if="${#fields.hasErrors('dataEntrega')}"

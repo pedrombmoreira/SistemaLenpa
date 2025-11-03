@@ -8,9 +8,11 @@ import com.projeto.sistema_lenpa.repository.EntregaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CompradorService {
@@ -44,12 +46,16 @@ public class CompradorService {
 
     public void cadastrarComprador(CompradorDTO compradorDTO) {
 
-        if (compradorRepository.findByCpf(compradorDTO.getCpf()) != null) {
-            throw new IllegalArgumentException("O CPF '" + compradorDTO.getCpf() + "' já está em uso.");
+        String cpfCnpj = compradorDTO.getCpf();
+
+        //checa duplicidade
+        if (StringUtils.hasText(cpfCnpj)) {
+            if (compradorRepository.findByCpf(cpfCnpj) != null) {
+                throw new IllegalArgumentException("O CPF/CNPJ '" + cpfCnpj + "' já está em uso.");
+            }
         }
 
         Comprador comprador = compradorDTO.toEntity();
-
         compradorRepository.save(comprador);
     }
 
@@ -66,10 +72,16 @@ public class CompradorService {
         Comprador comprador = compradorRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Falha ao atualizar: Comprador com ID " + id + " não encontrado."));
 
-        if (!comprador.getCpf().equals(compradorDTO.getCpf())) {
-            Comprador compradorComNovoCPF = compradorRepository.findByCpf(compradorDTO.getCpf());
-            if (compradorComNovoCPF != null && compradorComNovoCPF.getId() != comprador.getId()) {
-                throw new IllegalArgumentException("O CPF '" + compradorDTO.getCpf() + "' já está em uso por outro comprador.");
+        String novoCpfCnpj = compradorDTO.getCpf();
+        String cpfCnpjAntigo = comprador.getCpf();
+
+        if (!Objects.equals(cpfCnpjAntigo, novoCpfCnpj)) {
+
+            if (StringUtils.hasText(novoCpfCnpj)) {
+                Comprador compradorComNovoDoc = compradorRepository.findByCpf(novoCpfCnpj);
+                if (compradorComNovoDoc != null && compradorComNovoDoc.getId() != comprador.getId()) {
+                    throw new IllegalArgumentException("O CPF/CNPJ '" + novoCpfCnpj + "' já está em uso por outro comprador.");
+                }
             }
         }
 

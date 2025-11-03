@@ -1,0 +1,1 @@
+ALTER TABLE compradores ALTER COLUMN cpf DROP NOT NULL;

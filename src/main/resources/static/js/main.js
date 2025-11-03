@@ -44,13 +44,35 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Máscara para o campo de CPF
+    // Máscara para o campo de CPF / CNPJ
     const elementoCpf = document.getElementById('cpf');
-    if (elementoCpf) { // Só executa se o elemento existir na página atual
-        const mascaraCpf = {
-            mask: '000.000.000-00'
+    if (elementoCpf) {
+
+        const mascaraCpfCnpj = {
+            mask: [
+                {
+                    mask: '000.000.000-00',
+                },
+                {
+                    mask: '00.000.000/0000-00'
+                }
+            ],
+            // Função 'dispatch' decide qual máscara usar
+            dispatch: function (appended, dynamicMasked) {
+
+                const unmaskedValue = dynamicMasked.unmaskedValue;
+                const totalLength = (unmaskedValue + appended).length;
+
+                // Se o comprimento total for 11 ou menos, usamos a máscara de CPF.
+                if (totalLength <= 11) {
+                    return dynamicMasked.compiledMasks[0];
+                }
+
+                // Se o comprimento for maior que 11, usamos a máscara de CNPJ.
+                return dynamicMasked.compiledMasks[1];
+            }
         };
-        IMask(elementoCpf, mascaraCpf);
+        IMask(elementoCpf, mascaraCpfCnpj);
     }
 
     // Máscara para o campo de Telefone

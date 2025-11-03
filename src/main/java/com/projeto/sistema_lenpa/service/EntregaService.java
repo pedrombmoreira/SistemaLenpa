@@ -113,11 +113,22 @@ public class EntregaService {
         entregaRepository.save(entregaExistente);
     }
 
+    @Transactional
     public void deletarEntrega(int id) {
-        if (!entregaRepository.existsById(id)) {
-            throw new IllegalArgumentException("Falha ao deletar: Entrega com ID " + id + " não encontrada.");
+        Entrega entrega = entregaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Falha ao deletar: Entrega com ID " + id + " não encontrada."));
+
+        Planta planta = entrega.getPlanta();
+        int quantidadeDevolvida = entrega.getQuantidade_mudas();
+
+        if (planta != null) {
+            int estoqueAtual = planta.getQuantidade_mudas();
+            int estoqueAtualizado = estoqueAtual + quantidadeDevolvida;
+            planta.setQuantidade_mudas(estoqueAtualizado);
+
+            plantaRepository.save(planta);
         }
-        entregaRepository.deleteById(id);
+        entregaRepository.delete(entrega);
     }
 
 }

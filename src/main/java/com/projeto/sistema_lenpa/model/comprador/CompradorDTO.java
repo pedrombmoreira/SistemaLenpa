@@ -2,13 +2,14 @@ package com.projeto.sistema_lenpa.model.comprador;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.util.StringUtils;
 
 public class CompradorDTO {
 
     @NotEmpty(message = "Preencha o nome")
     private String nome;
-    @NotEmpty(message = "Preencha o CPF")
-    @Pattern(regexp = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$", message = "Formato de CPF inválido. Use 999.999.999-99")
+    @Pattern(regexp = "(^$)|(^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$)|(^\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}$)",
+            message = "Formato de CPF/CNPJ inválido.")
     private String cpf;
     @NotEmpty(message = "Preencha o telefone")
     private String telefone;
@@ -50,7 +51,7 @@ public class CompradorDTO {
     public Comprador toEntity() {
         Comprador comprador = new Comprador();
         comprador.setNome(nome);
-        comprador.setCpf(cpf);
+        comprador.setCpf(StringUtils.hasText(this.cpf) ? this.cpf : null); //validação para evitar conflito com a propriedade unique
         comprador.setTelefone(telefone);
         comprador.setAssociado_cespol(associado_cespol);
         return comprador;
@@ -67,7 +68,7 @@ public class CompradorDTO {
 
     public void updateEntity(Comprador comprador) {
         comprador.setNome(this.nome);
-        comprador.setCpf(this.cpf);
+        comprador.setCpf(StringUtils.hasText(this.cpf) ? this.cpf : null);
         comprador.setTelefone(this.telefone);
         comprador.setAssociado_cespol(this.associado_cespol);
     }

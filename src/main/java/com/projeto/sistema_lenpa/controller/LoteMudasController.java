@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/lotes")
@@ -54,11 +55,12 @@ public class LoteMudasController {
     }
 
     @PostMapping("/deletar")
-    public String deletarLote(@RequestParam Integer id) {
+    public String deletarLote(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
         try {
             loteMudasService.deletarLote(id);
-        } catch (IllegalArgumentException e) {
-            System.err.println(e.getMessage());
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            String mensagemErro = e.getMessage();
+            redirectAttributes.addFlashAttribute("errorMessage", mensagemErro);
         }
         return "redirect:/lotes/listar";
     }

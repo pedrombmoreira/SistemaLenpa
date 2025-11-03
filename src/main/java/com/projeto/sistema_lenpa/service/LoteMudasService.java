@@ -53,8 +53,7 @@ public class LoteMudasService {
         // Verificação de segurança: impede que o estoque fique negativo se algo estiver inconsistente.
         if (planta.getQuantidade_mudas() < lote.getQuantidade()) {
             throw new IllegalStateException(
-                    "Inconsistência de dados! Deletar o lote " + lote.getId() +
-                            " deixaria o estoque da planta '" + planta.getNome_popular() + "' negativo."
+                    "AÇÃO IMPEDIDA! \nDeletar esse lote deixaria o estoque da planta '" + planta.getNome_popular() + "' negativo."
             );
         }
 
